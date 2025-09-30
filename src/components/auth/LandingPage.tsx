@@ -110,14 +110,14 @@ export default function LandingPage() {
 
   const handleStartJourney = () => {
     if (user) {
-      router.push('/get-started');
+      router.push('/getstarted');
     } else {
-      router.push('/auth?mode=sign-in');
+      router.replace('/auth?mode=sign-in');
     }
   };
   
     const handleSignIn = () => {
-      router.push('/auth?mode=sign-in');
+      router.replace('/auth?mode=sign-in');
     };
 
   return (

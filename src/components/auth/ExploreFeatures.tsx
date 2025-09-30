@@ -151,7 +151,7 @@ export default function ExploreFeatures() {
           <div className="flex space-x-3">
             <Button 
               variant="outline" 
-              onClick={() => router.push('/get-started')}
+              onClick={() => router.push('/getstarted')}
               className="border-primary/30 hover:bg-primary/5"
             >
               Get Started
@@ -257,7 +257,7 @@ export default function ExploreFeatures() {
                 <div className="flex space-x-4">
                   <Button 
                     size="lg"
-                    onClick={() => router.push('/get-started')}
+                    onClick={() => router.push('/getstarted')}
                     className="bg-primary hover:bg-primary-dark"
                   >
                     <Play className="w-4 h-4 mr-2" />
@@ -266,7 +266,7 @@ export default function ExploreFeatures() {
                   <Button 
                     variant="outline" 
                     size="lg"
-                    onClick={() => router.push('/app')}
+                    onClick={() => router.push('/dashboard')}
                     className="border-primary/30 hover:bg-primary/5"
                   >
                     View Demo
@@ -365,7 +365,7 @@ export default function ExploreFeatures() {
             <div className="flex justify-center space-x-4">
               <Button 
                 size="lg"
-                onClick={() => router.push('/get-started')}
+                onClick={() => router.push('/getstarted')}
                 className="bg-primary hover:bg-primary-dark px-8"
               >
                 Start Your Journey

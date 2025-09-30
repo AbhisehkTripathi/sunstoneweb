@@ -58,7 +58,7 @@ export default function GetStarted() {
     if (currentStep < journeySteps.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      router.push('/app');
+      router.push('/dashboard');
     }
   };
 
