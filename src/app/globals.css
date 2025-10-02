@@ -147,6 +147,7 @@ Soft blues (trust, calm), gentle greens (healing, balance), warm neutrals, laven
   }
 }
 
+
 @layer base {
   * {
     @apply border-border;
@@ -289,4 +290,79 @@ Soft blues (trust, calm), gentle greens (healing, balance), warm neutrals, laven
     opacity: 1;
     transform: scale(1);
   }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0px) translateX(0px); }
+  50% { transform: translateY(-20px) translateX(10px); }
+}
+
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0px) translateX(0px); }
+  50% { transform: translateY(-30px) translateX(-15px); }
+}
+
+@keyframes float-particle {
+  0%, 100% { transform: translateY(0px); opacity: 0.3; }
+  50% { transform: translateY(-100px); opacity: 0.8; }
+}
+
+@keyframes pulse-slow {
+  0%, 100% { opacity: 0.1; }
+  50% { opacity: 0.2; }
+}
+
+@keyframes draw {
+  0% { stroke-dasharray: 0, 1000; }
+  100% { stroke-dasharray: 1000, 0; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-float {
+  animation: float 8s ease-in-out infinite;
+}
+
+.animate-float-slow {
+  animation: float-slow 12s ease-in-out infinite;
+}
+
+.animate-float-particle {
+  animation: float-particle 6s ease-in-out infinite;
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 4s ease-in-out infinite;
+}
+
+.animate-draw {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: draw 3s ease-in-out infinite alternate;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.6s ease-out;
+}
+
+@keyframes brain-draw {
+  from { stroke-dasharray: 0, 1000; }
+  to { stroke-dasharray: 1000, 0; }
+}
+
+@keyframes brain-breathe {
+  0%, 100% { opacity: 0.4; transform: scale(1); filter: blur(0px); }
+  50% { opacity: 0.8; transform: scale(1.05); filter: blur(1px); }
+}
+
+.animate-draw-once {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: brain-draw 5s ease-in-out forwards;
+}
+
+.animate-breathe {
+  animation: brain-breathe 8s ease-in-out infinite;
 }

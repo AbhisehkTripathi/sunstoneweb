@@ -112,12 +112,12 @@ export default function LandingPage() {
     if (user) {
       router.push('/getstarted');
     } else {
-      router.replace('/auth?mode=sign-in');
+      router.replace('/register-user');
     }
   };
   
     const handleSignIn = () => {
-      router.replace('/auth?mode=sign-in');
+      router.replace('/register-user');
     };
 
   return (

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export function middleware(req: NextRequest) {
-  const token = req.cookies.get("token"); // expects cookie-based auth
+  const token = req.cookies.get("authToken"); // expects cookie-based auth
   const protectedRoutes = ["/dashboard", "/settings"];
 
   const isProtected = protectedRoutes.some((route) =>

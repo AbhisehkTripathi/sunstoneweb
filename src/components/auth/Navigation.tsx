@@ -25,14 +25,14 @@ interface NavigationProps {
 
 const rooms = [
   { id: 'dashboard', name: 'Dashboard', icon: Home, description: 'Your wellness overview' },
+  { id: 'meditation', name: 'Meditation', icon: Music, description: 'Audio & music library' },
   { id: 'journal', name: 'Mind Journal', icon: BookOpen, description: 'Safe space for thoughts' },
-  { id: 'quiz', name: 'Wellness Quiz', icon: Brain, description: 'Assessments & insights' },
-  { id: 'learning', name: 'Learning', icon: GraduationCap, description: 'Courses & articles' },
+  // { id: 'learning', name: 'Learning', icon: GraduationCap, description: 'Courses & articles' },
   { id: 'breathing', name: 'Breathing', icon: Wind, description: 'Guided exercises' },
   { id: 'goals', name: 'Goals', icon: Target, description: 'Track your progress' },
-  { id: 'therapy', name: 'Therapy', icon: Calendar, description: 'Sessions & booking' },
-  { id: 'meditation', name: 'Meditation', icon: Music, description: 'Audio & music library' },
-  { id: 'community', name: 'Community', icon: Users, description: 'Connect with others' },
+  // { id: 'therapy', name: 'Therapy', icon: Calendar, description: 'Sessions & booking' },
+  { id: 'quiz', name: 'Wellness Quiz', icon: Brain, description: 'Assessments & insights' },
+  // { id: 'community', name: 'Community', icon: Users, description: 'Connect with others' },
   { id: 'progress', name: 'Progress', icon: TrendingUp, description: 'Your wellness journey' },
   { id: 'profile', name: 'Profile', icon: User, description: 'Personal settings' },
 ];

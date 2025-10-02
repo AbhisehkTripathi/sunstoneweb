@@ -294,8 +294,8 @@ const Index = () => {
         return <TherapyRoom />;
       case 'meditation':
         return <Meditation />;
-      case 'community':
-        return <CommunityRoom />;
+      // case 'community':
+      //   return <CommunityRoom />;
       case 'progress':
         return <ProgressRoom />;
       case 'profile':

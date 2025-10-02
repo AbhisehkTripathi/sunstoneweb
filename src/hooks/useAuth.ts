@@ -1,13 +1,18 @@
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
 import toast from "react-hot-toast";
+import { authService, LoginPayload, RegisterPayload } from "@/services/authService";
 
-interface RegisterData {
-  clerkUserId: string;
-  email: string;
-  name: string;
-  profile: string;
-  createdAt: any;
+interface LoginResponse {
+  success: boolean;
+  data: {
+    user_id: number;
+    email: string;
+    name: string;
+    profile: string;
+    role: string;
+    token?: string;
+  };
+  message: string;
 }
 
 interface RegisterResponse {
@@ -16,37 +21,53 @@ interface RegisterResponse {
     user_id: number;
     email: string;
     name: string;
-    profile: string;
+    profile?: string;
     role: string;
+    token?: string;
   };
   message: string;
 }
 
-const registerUser = async (data: RegisterData): Promise<RegisterResponse> => {
-  const response = await axios.post("http://localhost:3001/auth/register", data, {
-    headers: { "Content-Type": "application/json" },
-    validateStatus: () => true, // don't throw automatically on 4xx/5xx
-  });
-
-  if (response.status >= 400) {
-    throw new Error(response.data?.message || "Something went wrong");
-  }
-  return response.data;
-};
-
-export const useRegister = () => {
-  return useMutation<RegisterResponse, Error, RegisterData>({
-    mutationFn: registerUser,
+export const useLogin = () => {
+  return useMutation<LoginResponse, Error, LoginPayload>({
+    mutationFn: authService.login,
     onMutate: () => {
-      toast.loading("Registering user...");
+      toast.loading("Logging in...");
     },
     onSuccess: (data) => {
       toast.dismiss();
-      toast.success(data.message || "User registered successfully");
+      toast.success(data.message || "Login successful");
+
+      if (data.data.token) {
+        localStorage.setItem("authToken", data.data.token);
+      }
+      localStorage.setItem("user", JSON.stringify(data.data));
     },
-    onError: (error) => {
+    onError: (error:any) => {
       toast.dismiss();
-      toast.error(error.message || "Registration failed");
+      toast.error(error.response?.data?.message || "Login failed");
+    },
+  });
+};
+
+export const useRegister = () => {
+  return useMutation<RegisterResponse, Error, RegisterPayload>({
+    mutationFn: authService.register,
+    onMutate: () => {
+      toast.loading("Creating account...");
+    },
+    onSuccess: (data) => {
+      toast.dismiss();
+      toast.success(data.message || "Account created successfully");
+
+      if (data.data.token) {
+        localStorage.setItem("authToken", data.data.token);
+      }
+      localStorage.setItem("user", JSON.stringify(data.data));
+    },
+    onError: (error:any) => {
+      toast.dismiss();
+      toast.error(error.response?.data?.message || "Registration failed");
     },
   });
 };

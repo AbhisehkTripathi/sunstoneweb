@@ -14,7 +14,7 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
     <ClerkProvider publishableKey={publishableKey}>
       <QueryProvider>
         <TooltipProvider>
-          <Toaster />
+          {/* <Toaster /> */}
           <Sonner />
           {children}
         </TooltipProvider>
