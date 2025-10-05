@@ -12,8 +12,31 @@ import { useUser, useAuth } from "@clerk/clerk-react";
 import { SignIn, SignUp } from "@clerk/clerk-react";
 import Cookies from "js-cookie";
 import toast from "react-hot-toast";
+import { useAuthStore } from "@/store/useAuthStore";
+
+type ApiUser = {
+  user_id: number;
+  name: string;
+  email: string;
+  role?: string | null;
+  profile?: string | null;
+  // ...other fields
+};
+
+type ApiPayload = {
+  user: ApiUser;
+  token: any; // may be "" if backend returns empty
+};
+
+
+type ApiResponse = {
+  success: boolean;
+  message: string;
+  data: ApiPayload;
+};
 
 const AuthPage = () => {
+  const { setAuth,setAuthLogin } = useAuthStore();
   const router = useRouter();
   const [authMode, setAuthMode] = useState("sign-in");
   const [useClerkAuth, setUseClerkAuth] = useState(false);
@@ -24,8 +47,6 @@ const AuthPage = () => {
   
   // Sign In State
   const [signInEmail, setSignInEmail] = useState("");
-  const [signInPassword, setSignInPassword] = useState("");
-  const [showSignInPassword, setShowSignInPassword] = useState(false);
   
   // Sign Up State
   const [signUpName, setSignUpName] = useState("");
@@ -84,13 +105,21 @@ const AuthPage = () => {
       {
         onSuccess: (res) => {
           console.log("Login success:", res);
-            if (res.data.token) {
-            Cookies.set("authToken", res.data.token, {
+            if (res?.data?.token) {
+            Cookies.set("authToken", res?.data?.token, {
               expires: 7,
               secure: process.env.NODE_ENV === "production",
               sameSite: "strict",
             });
+            const wrapper = res?.data;
+            const payload: ApiPayload | undefined = (wrapper && (wrapper as any).data)  ?? wrapper;
+            const user = payload?.user;
+            const token = payload?.token;
+            console.log("User data:", user);
+            console.log("Token:", token);
+            setAuthLogin(user, token);
           }
+          
           router.push("/dashboard");
         },
         onError: (err: any) => {
@@ -131,6 +160,18 @@ const AuthPage = () => {
           setAuthMode("sign-in"); 
           setSignInEmail(signUpEmail);
           toast.success("Registration successful");
+          const data = res?.data;
+
+          if (data) {
+            const user = {
+              id: data.user_id?.toString(),
+              name: data.name,
+              email: data.email,
+              profile: data.profile,
+              role: data.role,
+            };
+            setAuth(user, null); 
+          }
         },
         onError: (err: any) => {
           console.error("Registration failed:", err);

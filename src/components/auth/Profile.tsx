@@ -22,7 +22,8 @@ import {
   ChevronRight
 } from 'lucide-react';
 import { cn } from '@/libs/utils';
-
+import { useAuthStore } from '@/store/useAuthStore';
+import moment from 'moment';
 const achievements = [
   { title: '7-Day Streak', description: 'Completed daily check-ins for a week', icon: '🔥', earned: true },
   { title: 'Mindful Moments', description: '50 meditation sessions completed', icon: '🧘', earned: true },
@@ -41,7 +42,7 @@ const wellnessStats = [
 
 export default function Profile() {
   const [isEditing, setIsEditing] = useState(false);
-
+  const { user } = useAuthStore();
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 p-4 md:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto space-y-6">
@@ -67,8 +68,8 @@ export default function Profile() {
               {/* Profile Info */}
               <div className="flex-1 text-center md:text-left space-y-3">
                 <div className="flex flex-col md:flex-row items-center md:items-start gap-3">
-                  <h1 className="text-2xl md:text-3xl font-bold text-foreground">Jane Doe</h1>
-                  <Badge className="bg-primary/10 text-primary border-primary/20">Pro Member</Badge>
+                  <h1 className="text-2xl md:text-3xl font-bold text-foreground">{user?.name}</h1>
+                  <Badge className="bg-primary/10 text-primary border-primary/20">{user?.role}</Badge>
                 </div>
                 
                 <p className="text-muted-foreground text-sm md:text-base max-w-2xl">
@@ -78,7 +79,7 @@ export default function Profile() {
                 <div className="flex flex-col sm:flex-row gap-3 text-sm">
                   <div className="flex items-center justify-center md:justify-start gap-2">
                     <Mail className="w-4 h-4 text-primary" />
-                    <span className="text-foreground">jane.doe@example.com</span>
+                    <span className="text-foreground">{user?.email}</span>
                   </div>
                   <div className="hidden sm:block text-muted-foreground">•</div>
                   <div className="flex items-center justify-center md:justify-start gap-2">
@@ -88,7 +89,7 @@ export default function Profile() {
                   <div className="hidden sm:block text-muted-foreground">•</div>
                   <div className="flex items-center justify-center md:justify-start gap-2">
                     <Calendar className="w-4 h-4 text-accent" />
-                    <span className="text-foreground">Joined March 2024</span>
+                    <span className="text-foreground">Joined {moment(user?.created_at).format('MMMM Do YYYY')}</span>
                   </div>
                 </div>
               </div>
