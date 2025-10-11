@@ -54,6 +54,14 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        success: {
+          DEFAULT: "hsl(var(--success))",
+          foreground: "hsl(var(--success-foreground))",
+        },
+        warning: {
+          DEFAULT: "hsl(var(--warning))",
+          foreground: "hsl(var(--warning-foreground))",
+        },
         wellness: {
           calm: "hsl(var(--wellness-calm))",
           healing: "hsl(var(--wellness-healing))",
@@ -123,6 +131,62 @@ module.exports = {
             transform: "scale(1)",
           },
         },
+        // Sunstone Mind custom animations
+        "breathe-in": {
+          "0%, 100%": { 
+            transform: "scale(0.8)", 
+            opacity: "0.6" 
+          },
+          "50%": { 
+            transform: "scale(1.2)", 
+            opacity: "1" 
+          }
+        },
+        "wave-flow": {
+          "0%, 100%": { 
+            "background-position": "0% 50%" 
+          },
+          "50%": { 
+            "background-position": "100% 50%" 
+          }
+        },
+        "sun-radiate": {
+          "0%": { 
+            transform: "rotate(0deg)", 
+            opacity: "1" 
+          },
+          "50%": { 
+            opacity: "0.5" 
+          },
+          "100%": { 
+            transform: "rotate(360deg)", 
+            opacity: "1" 
+          }
+        },
+        "float-gentle": {
+          "0%, 100%": { 
+            transform: "translateY(0px)" 
+          },
+          "50%": { 
+            transform: "translateY(-8px)" 
+          }
+        },
+        "pulse-glow": {
+          "0%, 100%": { 
+            "box-shadow": "0 0 20px rgba(76, 201, 192, 0.2)" 
+          },
+          "50%": { 
+            "box-shadow": "0 0 40px rgba(76, 201, 192, 0.4)" 
+          }
+        },
+        "shimmer": {
+          "0%": { 
+            "background-position": "-200% center" 
+          },
+          "100%": { 
+            "background-position": "200% center" 
+          }
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -130,23 +194,36 @@ module.exports = {
         "fade-in": "fade-in 0.5s ease-out",
         "slide-up": "slide-up 0.6s cubic-bezier(0.4, 0, 0.2, 1)",
         "scale-in": "scale-in 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+        // Sunstone Mind custom animations
+        "breathe-in": "breathe-in 4s cubic-bezier(0.45, 0, 0.55, 1) infinite",
+        "wave-flow": "wave-flow 3s ease-in-out infinite",
+        "sun-radiate": "sun-radiate 2s linear infinite",
+        "float-gentle": "float-gentle 3s ease-in-out infinite",
+        "pulse-glow": "pulse-glow 2s ease-in-out infinite",
+        "shimmer": "shimmer 3s linear infinite",
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        display: ['Poppins', 'Inter', 'sans-serif'],
+        body: ['Nunito', 'Inter', 'sans-serif'],
       },
       boxShadow: {
-        'wellness-soft': 'var(--shadow-soft)',
-        'wellness-medium': 'var(--shadow-medium)',
-        'wellness-large': 'var(--shadow-large)',
+        'wellness-soft': '0 1px 3px rgba(167, 228, 224, 0.04), 0 1px 2px rgba(44, 62, 80, 0.02)',
+        'wellness-medium': '0 2px 8px rgba(167, 228, 224, 0.06), 0 1px 4px rgba(44, 62, 80, 0.03)',
+        'wellness-large': '0 4px 16px rgba(167, 228, 224, 0.08), 0 2px 8px rgba(44, 62, 80, 0.04)',
+        'wellness-glow': '0 0 16px rgba(167, 228, 224, 0.12), 0 0 8px rgba(167, 228, 224, 0.08)',
       },
       backgroundImage: {
-        'gradient-primary': 'var(--gradient-primary)',
-        'gradient-secondary': 'var(--gradient-secondary)',
-        'gradient-accent': 'var(--gradient-accent)',
-        'gradient-wellness': 'var(--gradient-wellness)',
-        'gradient-calm': 'var(--gradient-calm)',
+        'gradient-primary': 'linear-gradient(135deg, #A7E4E0 0%, #7DBEDC 100%)',
+        'gradient-secondary': 'linear-gradient(135deg, #7DBEDC 0%, #A7D8E8 100%)',
+        'gradient-accent': 'linear-gradient(135deg, #FFF3D4 0%, #FFEAB3 100%)',
+        'gradient-wellness': 'linear-gradient(135deg, #A7E4E0 0%, #7DBEDC 50%, #7EDFC7 100%)',
+        'gradient-calm': 'linear-gradient(135deg, #E8F4F8 0%, #D4EEF7 50%, #C8F2E8 100%)',
+        'gradient-sunrise': 'linear-gradient(180deg, #FFF3D4 0%, #C9F0ED 100%)',
+        'gradient-twilight': 'linear-gradient(180deg, #A7D8E8 0%, #D8E8ED 100%)',
+        'gradient-mist': 'linear-gradient(135deg, #FAFCFD 0%, #F5F9FA 100%)',
       },
     },
   },
   plugins: [require("tailwindcss-animate")],
-}
+};

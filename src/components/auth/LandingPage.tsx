@@ -1,12 +1,6 @@
-'use client';
-
-import { useState } from 'react';
-import { useRouter } from "next/navigation";
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import Image from 'next/image';
-import { useUser, UserButton, SignedIn, SignedOut } from '@clerk/clerk-react';
+"use client";
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { 
   Heart, 
   Calendar, 
@@ -22,16 +16,9 @@ import {
   Leaf,
   Sun,
   Moon,
-  Shield,
-  User,
-  Mail
+  Shield
 } from 'lucide-react';
-import { cn } from '@/libs/utils';
-import heroBackground from '@/assets/hero-background.jpg';
-import aboutIllustration from '@/assets/about-illustration.jpg';
-import appMockup1 from '@/assets/app-mockup-1.jpg';
-import appMockup2 from '@/assets/app-mockup-2.jpg';
-
+import { useUser, UserButton, SignedIn, SignedOut } from '@clerk/clerk-react';
 const features = [
   {
     icon: Heart,
@@ -61,9 +48,9 @@ const features = [
     icon: Users,
     title: 'Community Support',
     description: 'Join safe spaces where you can share experiences, find encouragement, and build meaningful connections.',
-    color: 'text-destructive',
-    bgColor: 'bg-destructive/10',
-    borderColor: 'border-destructive/20'
+    color: 'text-success',
+    bgColor: 'bg-success/10',
+    borderColor: 'border-success/20'
   }
 ];
 
@@ -72,33 +59,57 @@ const testimonials = [
     name: 'Sarah Chen',
     role: 'Teacher',
     content: 'Sunstone Mind has become my daily refuge. The meditation library helped me find peace during the most stressful moments.',
-    rating: 5,
-    bgColor: 'bg-gradient-to-br from-primary/10 to-primary/5'
+    rating: 5
   },
   {
     name: 'Marcus Johnson',
     role: 'Software Engineer',
     content: 'The mood tracking feature opened my eyes to patterns I never noticed. It\'s like having a gentle guide for my emotional wellness.',
-    rating: 5,
-    bgColor: 'bg-gradient-to-br from-secondary/10 to-secondary/5'
+    rating: 5
   },
   {
     name: 'Emily Rodriguez',
     role: 'Healthcare Worker',
     content: 'Finding a therapist through Sunstone Mind was seamless. The platform creates such a safe, nurturing environment.',
-    rating: 5,
-    bgColor: 'bg-gradient-to-br from-accent/10 to-accent/5'
+    rating: 5
   }
 ];
 
 export default function LandingPage() {
-  const [currentTestimonial, setCurrentTestimonial] = useState(0);
+  const [currentTestimonial, setCurrentTestimonial] = useState(0);  
   const router = useRouter();
   const { user } = useUser();
+  const [scrollY, setScrollY] = useState(0);
+  type SectionKey = 'hero' | 'features' | 'mission' | 'demo' | 'testimonials';
+const sectionKeys: SectionKey[] = ['features', 'mission', 'demo', 'testimonials'];
+const [isVisible, setIsVisible] = useState<Record<SectionKey, boolean>>({
+    hero: false,
+    features: false,
+    mission: false,
+    demo: false,
+    testimonials: false
+  });
 
-  const handleExploreFeatures = () => {
-    router.push('/explore-features');
-  };
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollY(window.scrollY);
+      // Check visibility of sections
+      sectionKeys.forEach((section) => {
+        const element = document.getElementById(section);
+        if (element) {
+          const rect = element.getBoundingClientRect();
+          const isInView = rect.top < window.innerHeight * 0.75 && rect.bottom > 0;
+          if (isInView && !isVisible[section]) {
+            setIsVisible((prev) => ({ ...prev, [section]: true }));
+          }
+        }
+      });
+    };
+
+    setIsVisible(prev => ({ ...prev, hero: true }));
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const nextTestimonial = () => {
     setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
@@ -120,140 +131,149 @@ export default function LandingPage() {
       router.replace('/register-user');
     };
 
+
   return (
-    <div className="min-h-screen bg-background">
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/40">
-        <div className="container mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center">
-            <Sparkles className="w-8 h-8 text-primary mr-2" />
-            <span className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              Sunstone Mind
-            </span>
-          </div>
-          
-          <div className="flex items-center space-x-4">
-            <SignedOut>
-              <Button variant="ghost" onClick={handleSignIn}>
-                Sign In
-              </Button>
-              <Button onClick={handleStartJourney} className="rounded-2xl">
-                Get Started
-              </Button>
-            </SignedOut>
+    <div className="min-h-screen bg-gradient-to-b from-background via-wellness-calm/20 to-background">
+      <nav className="fixed top-0 left-0 right-0 z-50 transition-all duration-500">
+        <div 
+          className="mx-auto max-w-7xl px-6 py-4 transition-all duration-500"
+          style={{
+            backgroundColor: scrollY > 50 ? 'rgba(250, 252, 253, 0.95)' : 'transparent',
+            backdropFilter: scrollY > 50 ? 'blur(12px)' : 'none',
+            boxShadow: scrollY > 50 ? '0 2px 8px rgba(167, 228, 224, 0.06)' : 'none',
+            borderRadius: scrollY > 50 ? '0 0 24px 24px' : '0'
+          }}
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3 animate-float-gentle">
+              <img src="/happy.svg" alt="Happy" className="w-10 h-10" />
+            </div>
             
-            <SignedIn>
-              <div className="flex items-center space-x-4">
-                <Button onClick={() => router.push('/dashboard')} variant="ghost">
-                  Dashboard
-                </Button>
-                <UserButton 
-                  appearance={{
-                    elements: {
-                      avatarBox: "w-8 h-8"
-                    }
-                  }}
-                  afterSignOutUrl="/"
-                />
-              </div>
-            </SignedIn>
+            <div className="flex items-center space-x-3">
+              <button className="px-4 py-2 text-sm font-medium text-foreground hover:text-primary transition-colors duration-300" onClick={handleSignIn}>
+                Sign In
+              </button>
+              <button className="px-6 py-2 text-sm font-medium bg-gradient-primary text-foreground rounded-full hover:shadow-wellness-medium transition-all duration-300 hover:-translate-y-0.5" onClick={handleStartJourney}>
+                Get Started
+              </button>
+            </div>
           </div>
         </div>
       </nav>
-      {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        <div 
-          className="absolute inset-0 bg-cover bg-center opacity-20"
-          style={{ backgroundImage: `url(${heroBackground})` }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-accent/10 to-secondary/20" />
-        
-        {/* Floating elements */}
-        <div className="absolute top-20 left-10 w-32 h-32 bg-primary/10 rounded-full blur-xl animate-pulse" />
-        <div className="absolute bottom-32 right-16 w-48 h-48 bg-accent/10 rounded-full blur-2xl animate-pulse delay-1000" />
-        <div className="absolute top-1/2 left-1/4 w-24 h-24 bg-secondary/10 rounded-full blur-lg animate-pulse delay-500" />
+
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+        <div className="absolute inset-0 overflow-hidden">
+          <div 
+            className="absolute top-20 left-10 w-64 h-64 bg-primary/5 rounded-full blur-3xl animate-float-gentle"
+            style={{ animationDelay: '0s' }}
+          />
+          <div 
+            className="absolute bottom-32 right-16 w-96 h-96 bg-accent/5 rounded-full blur-3xl animate-float-gentle"
+            style={{ animationDelay: '2s' }}
+          />
+          <div 
+            className="absolute top-1/2 left-1/3 w-48 h-48 bg-secondary/5 rounded-full blur-2xl animate-float-gentle"
+            style={{ animationDelay: '1s' }}
+          />
+        </div>
         
         <div className="relative container mx-auto px-6 text-center">
-          <div className="max-w-4xl mx-auto animate-fade-in">
-            <div className="flex items-center justify-center mb-6">
-              <Sparkles className="w-8 h-8 text-primary mr-3" />
-              <Badge variant="outline" className="text-primary border-primary/30 bg-primary/5 px-4 py-2">
+          <div 
+            className={`max-w-4xl mx-auto transition-all duration-1000 ${
+              isVisible.hero ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            }`}
+          >
+            <div className="flex items-center justify-center mb-8 animate-fade-in">
+              <Sparkles className="w-6 h-6 text-primary mr-3 animate-pulse-glow" />
+              <span className="px-5 py-2 text-sm font-medium text-primary border border-primary/20 bg-primary/5 rounded-full">
                 Your Wellness Sanctuary
-              </Badge>
+              </span>
             </div>
             
-            <h1 className="text-5xl md:text-7xl font-bold mb-8 leading-tight">
-              <span className="bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
-                Bring Light and
+            <h1 className="text-5xl md:text-7xl font-bold mb-8 leading-tight animate-fade-in" style={{ lineHeight: '1.25' }}>
+              <span 
+                className="block bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent animate-shimmer mb-1 pb-2"
+                style={{ backgroundSize: '200% auto' }}
+              >Bring Light and
               </span>
-              <br />
-              <span className="text-foreground">Calmness to Your Mind</span>
+              <span className="block text-foreground/90">Calmness to Your Mind</span>
             </h1>
             
-            <p className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-3xl mx-auto leading-relaxed">
+            <p 
+              className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-3xl mx-auto leading-relaxed animate-fade-in"
+              style={{ animationDelay: '300ms' }}
+            >
               A digital sanctuary where mindfulness meets modern technology. 
               Discover therapy, meditation, and community support designed to nurture your mental wellness journey.
             </p>
             
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Button 
-                size="lg" 
-                onClick={handleStartJourney}
-                className="bg-primary hover:bg-primary-dark text-primary-foreground px-8 py-4 text-lg rounded-2xl shadow-wellness-medium hover:shadow-wellness-large transition-all duration-300 hover:scale-105"
-              >
-                <Leaf className="w-5 h-5 mr-2" />
+            <div 
+              className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in"
+              style={{ animationDelay: '600ms' }}
+            >
+              <button className="group px-8 py-4 text-lg font-medium bg-gradient-primary text-foreground rounded-2xl shadow-wellness-soft hover:shadow-wellness-medium transition-all duration-500 hover:-translate-y-1 flex items-center" onClick={handleStartJourney}>
+                <Leaf className="w-5 h-5 mr-2 animate-float-gentle" />
                 Start Your Journey
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </Button>
+                <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
+              </button>
               
-              <Button 
-                variant="outline" 
-                size="lg"
-                onClick={handleExploreFeatures}
-                className="border-primary/30 text-primary hover:bg-primary/5 px-8 py-4 text-lg rounded-2xl"
-              >
+              <button className="group px-8 py-4 text-lg font-medium text-primary border border-primary/30 rounded-2xl hover:bg-primary/5 transition-all duration-500 flex items-center" onClick={handleStartJourney}>
                 <Play className="w-5 h-5 mr-2" />
                 Explore Features
-              </Button>
+              </button>
             </div>
+          </div>
+        </div>
+
+        {/* Scroll Indicator */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+          <div className="w-6 h-10 border-2 border-primary/30 rounded-full p-1">
+            <div className="w-1.5 h-3 bg-primary/50 rounded-full animate-pulse" />
           </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section className="py-24 bg-gradient-to-b from-background to-wellness-calm">
+      <section id="features" className="py-24 relative">
         <div className="container mx-auto px-6">
-          <div className="text-center mb-20 animate-fade-in">
-            <Badge variant="outline" className="text-secondary border-secondary/30 bg-secondary/5 mb-6">
+          <div 
+            className={`text-center mb-20 transition-all duration-1000 ${
+              isVisible.features ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            }`}
+          >
+            <span className="inline-block px-5 py-2 text-sm font-medium text-secondary border border-secondary/20 bg-secondary/5 rounded-full mb-6">
               Wellness Tools
-            </Badge>
+            </span>
             <h2 className="text-4xl md:text-5xl font-bold mb-6 text-foreground">
               Everything You Need for
-              <span className="block text-secondary">Mental Wellness</span>
+              <span className="block bg-gradient-to-r from-secondary to-accent bg-clip-text text-transparent mt-2">
+                Mental Wellness
+              </span>
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Thoughtfully designed features that adapt to your unique wellness journey
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-6 max-w-6xl mx-auto">
             {features.map((feature, index) => {
               const Icon = feature.icon;
               
               return (
-                <Card 
+                <div
                   key={index}
-                  className={cn(
-                    "wellness-card hover:scale-[1.02] transition-all duration-500 border-2 group cursor-pointer",
-                    feature.borderColor,
-                    feature.bgColor
-                  )}
+                  className={`group relative bg-card border border-border rounded-3xl p-8 hover:shadow-wellness-medium transition-all duration-700 cursor-pointer ${
+                    isVisible.features ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+                  }`}
+                  style={{ 
+                    transitionDelay: `${index * 150}ms`,
+                  }}
                 >
-                  <CardContent className="p-8">
-                    <div className={cn(
-                      "w-16 h-16 rounded-2xl flex items-center justify-center mb-6 transition-all duration-300 group-hover:scale-110",
-                      feature.bgColor.replace('/10', '/20')
-                    )}>
-                      <Icon className={cn("w-8 h-8", feature.color)} />
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  
+                  <div className="relative">
+                    <div className={`w-16 h-16 ${feature.bgColor} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 animate-float-gentle`}>
+                      <Icon className={`w-8 h-8 ${feature.color}`} />
                     </div>
                     
                     <h3 className="text-2xl font-semibold text-foreground mb-4">
@@ -264,33 +284,39 @@ export default function LandingPage() {
                       {feature.description}
                     </p>
                     
-                    <div className={cn(
-                      "flex items-center text-sm font-medium transition-colors group-hover:translate-x-2 transition-transform duration-300",
-                      feature.color
-                    )}>
+                    <div className={`flex items-center text-sm font-medium ${feature.color} group-hover:translate-x-2 transition-transform duration-300`}>
                       Learn more
                       <ArrowRight className="w-4 h-4 ml-2" />
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               );
             })}
           </div>
         </div>
       </section>
 
-      {/* About/Mission Section */}
-      <section className="py-24 bg-gradient-to-r from-wellness-healing to-wellness-peace">
-        <div className="container mx-auto px-6">
+      {/* Mission Section */}
+      <section id="mission" className="py-24 bg-gradient-to-br from-wellness-healing/20 to-wellness-peace/20 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-30">
+          <div className="absolute top-20 right-20 w-64 h-64 bg-primary/10 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute bottom-20 left-20 w-80 h-80 bg-accent/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+        </div>
+
+        <div className="container mx-auto px-6 relative">
           <div className="grid lg:grid-cols-2 gap-16 items-center max-w-7xl mx-auto">
-            <div className="space-y-8 animate-slide-up">
+            <div 
+              className={`space-y-8 transition-all duration-1000 ${
+                isVisible.mission ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'
+              }`}
+            >
               <div>
-                <Badge variant="outline" className="text-accent border-accent/30 bg-accent/5 mb-6">
+                <span className="inline-block px-5 py-2 text-sm font-medium text-accent border border-accent/20 bg-accent/5 rounded-full mb-6">
                   Our Mission
-                </Badge>
+                </span>
                 <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
                   Mental Health Should Be
-                  <span className="block bg-gradient-to-r from-secondary to-accent bg-clip-text text-transparent">
+                  <span className="block bg-gradient-to-r from-secondary to-accent bg-clip-text text-transparent mt-2">
                     Accessible to Everyone
                   </span>
                 </h2>
@@ -326,174 +352,170 @@ export default function LandingPage() {
               </div>
             </div>
             
-            <div className="relative animate-scale-in">
-              <div className="absolute -inset-4 bg-gradient-to-r from-primary/20 to-accent/20 rounded-3xl blur-xl" />
-              <Image
-                src={aboutIllustration} 
-                alt="Mental wellness illustration" 
-                className="relative w-full h-auto rounded-2xl shadow-wellness-large"
-              />
+            <div 
+              className={`relative transition-all duration-1000 ${
+                isVisible.mission ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8'
+              }`}
+            >
+              <div className="absolute -inset-4 bg-gradient-to-r from-primary/20 to-accent/20 rounded-3xl blur-2xl animate-pulse" />
+              <div className="relative aspect-square bg-gradient-to-br from-primary/20 to-secondary/20 rounded-3xl p-8 flex items-center justify-center">
+                <div className="text-center space-y-4">
+                  <Sparkles className="w-16 h-16 text-primary mx-auto animate-float-gentle" />
+                  <p className="text-2xl font-semibold text-foreground">Your Wellness Journey</p>
+                  <p className="text-muted-foreground">Starts with a single step</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Screenshots/Demo Section */}
-      <section className="py-24 bg-gradient-to-b from-background to-wellness-warmth">
+      {/* Demo Section */}
+      <section id="demo" className="py-24">
         <div className="container mx-auto px-6">
-          <div className="text-center mb-20 animate-fade-in">
-            <Badge variant="outline" className="text-primary border-primary/30 bg-primary/5 mb-6">
+          <div 
+            className={`text-center mb-20 transition-all duration-1000 ${
+              isVisible.demo ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            }`}
+          >
+            <span className="inline-block px-5 py-2 text-sm font-medium text-primary border border-primary/20 bg-primary/5 rounded-full mb-6">
               See It In Action
-            </Badge>
+            </span>
             <h2 className="text-4xl md:text-5xl font-bold mb-6 text-foreground">
               A Glimpse Into Your
-              <span className="block text-primary">Wellness Sanctuary</span>
+              <span className="block text-primary mt-2">Wellness Sanctuary</span>
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Discover how Sunstone Mind creates a seamless, calming experience for your mental wellness journey
+              Discover how Sunstone Mind creates a seamless, calming experience
             </p>
           </div>
 
           <div className="max-w-6xl mx-auto">
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
-              {/* Mobile mockup */}
-              <div className="relative group">
-                <div className="absolute -inset-6 bg-gradient-primary rounded-3xl blur-2xl opacity-20 group-hover:opacity-30 transition-opacity" />
-                <div className="relative bg-gradient-to-br from-card to-card/80 p-8 rounded-3xl shadow-wellness-large">
-                  <Image 
-                    src={appMockup1} 
-                    alt="Sunstone Mind mobile app dashboard" 
-                    className="w-full max-w-sm mx-auto rounded-2xl shadow-wellness-medium"
-                  />
-                  <div className="mt-6 text-center">
-                    <h3 className="text-xl font-semibold text-foreground mb-2">Daily Wellness Dashboard</h3>
-                    <p className="text-muted-foreground">Track your mood, meditation progress, and wellness goals</p>
+            <div className="grid lg:grid-cols-2 gap-12">
+              {[
+                { title: 'Daily Wellness Dashboard', desc: 'Track your mood, meditation progress, and wellness goals' },
+                { title: 'Meditation & Music Library', desc: 'Curated audio experiences for every mood and moment' }
+              ].map((item, index) => (
+                <div
+                  key={index}
+                  className={`group relative transition-all duration-1000 ${
+                    isVisible.demo ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+                  }`}
+                  style={{ transitionDelay: `${index * 200}ms` }}
+                >
+                  <div className="absolute -inset-6 bg-gradient-primary rounded-3xl blur-2xl opacity-0 group-hover:opacity-20 transition-opacity duration-500" />
+                  <div className="relative bg-card border border-border rounded-3xl p-8 hover:shadow-wellness-large transition-all duration-500">
+                    <div className="aspect-[4/3] bg-gradient-to-br from-primary/10 to-secondary/10 rounded-2xl mb-6 flex items-center justify-center">
+                      <div className="text-center space-y-3">
+                        <div className="w-16 h-16 bg-primary/20 rounded-2xl mx-auto flex items-center justify-center animate-float-gentle">
+                          <Sparkles className="w-8 h-8 text-primary" />
+                        </div>
+                        <p className="text-sm text-muted-foreground">App Preview</p>
+                      </div>
+                    </div>
+                    <h3 className="text-xl font-semibold text-foreground mb-2">{item.title}</h3>
+                    <p className="text-muted-foreground">{item.desc}</p>
                   </div>
                 </div>
-              </div>
-
-              {/* Tablet mockup */}
-              <div className="relative group">
-                <div className="absolute -inset-6 bg-gradient-secondary rounded-3xl blur-2xl opacity-20 group-hover:opacity-30 transition-opacity" />
-                <div className="relative bg-gradient-to-br from-card to-card/80 p-8 rounded-3xl shadow-wellness-large">
-                  <Image 
-                    src={appMockup2} 
-                    alt="Sunstone Mind meditation library" 
-                    className="w-full rounded-2xl shadow-wellness-medium"
-                  />
-                  <div className="mt-6 text-center">
-                    <h3 className="text-xl font-semibold text-foreground mb-2">Meditation & Music Library</h3>
-                    <p className="text-muted-foreground">Curated audio experiences for every mood and moment</p>
-                  </div>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-24 bg-gradient-to-r from-wellness-peace to-wellness-calm">
+      <section id="testimonials" className="py-24 bg-gradient-to-r from-wellness-peace/20 to-wellness-calm/20">
         <div className="container mx-auto px-6">
-          <div className="text-center mb-20">
-            <Badge variant="outline" className="text-accent border-accent/30 bg-accent/5 mb-6">
+          <div 
+            className={`text-center mb-20 transition-all duration-1000 ${
+              isVisible.testimonials ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            }`}
+          >
+            <span className="inline-block px-5 py-2 text-sm font-medium text-accent border border-accent/20 bg-accent/5 rounded-full mb-6">
               User Stories
-            </Badge>
+            </span>
             <h2 className="text-4xl md:text-5xl font-bold mb-6 text-foreground">
               Real People,
-              <span className="block text-accent">Real Transformations</span>
+              <span className="block text-accent mt-2">Real Transformations</span>
             </h2>
           </div>
 
           <div className="max-w-4xl mx-auto relative">
-            <div className="relative overflow-hidden rounded-3xl">
-              <Card className={cn(
-                "wellness-card border-none p-12 text-center transition-all duration-500",
-                testimonials[currentTestimonial].bgColor
-              )}>
-                <CardContent className="space-y-8">
-                  <Quote className="w-12 h-12 text-accent mx-auto opacity-60" />
-                  
-                  <blockquote className="text-2xl md:text-3xl font-medium text-foreground leading-relaxed">
-                    "{testimonials[currentTestimonial].content}"
-                  </blockquote>
-                  
-                  <div className="flex items-center justify-center space-x-2">
-                    {[...Array(testimonials[currentTestimonial].rating)].map((_, i) => (
-                      <Star key={i} className="w-5 h-5 fill-accent text-accent" />
-                    ))}
-                  </div>
-                  
-                  <div>
-                    <div className="font-semibold text-lg text-foreground">
-                      {testimonials[currentTestimonial].name}
-                    </div>
-                    <div className="text-muted-foreground">
-                      {testimonials[currentTestimonial].role}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+            <div className="bg-card border border-border rounded-3xl p-12 shadow-wellness-medium">
+              <Quote className="w-12 h-12 text-accent/40 mx-auto mb-6" />
+              
+              <blockquote className="text-2xl md:text-3xl font-medium text-foreground leading-relaxed text-center mb-8">
+                "{testimonials[currentTestimonial].content}"
+              </blockquote>
+              
+              <div className="flex items-center justify-center space-x-1 mb-6">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-5 h-5 fill-accent text-accent" />
+                ))}
+              </div>
+              
+              <div className="text-center">
+                <div className="font-semibold text-lg text-foreground">
+                  {testimonials[currentTestimonial].name}
+                </div>
+                <div className="text-muted-foreground">
+                  {testimonials[currentTestimonial].role}
+                </div>
+              </div>
             </div>
 
-            {/* Navigation */}
             <div className="flex items-center justify-center mt-8 space-x-4">
-              <Button
-                variant="outline"
-                size="icon"
+              <button
                 onClick={prevTestimonial}
-                className="rounded-full border-accent/30 hover:bg-accent/10"
+                className="w-10 h-10 rounded-full border border-accent/30 flex items-center justify-center hover:bg-accent/10 transition-all duration-300"
               >
-                <ChevronLeft className="w-4 h-4" />
-              </Button>
+                <ChevronLeft className="w-5 h-5 text-accent" />
+              </button>
               
               <div className="flex space-x-2">
                 {testimonials.map((_, index) => (
                   <button
                     key={index}
                     onClick={() => setCurrentTestimonial(index)}
-                    className={cn(
-                      "w-3 h-3 rounded-full transition-all duration-300",
+                    className={`h-2 rounded-full transition-all duration-300 ${
                       currentTestimonial === index 
-                        ? "bg-accent scale-125" 
-                        : "bg-accent/30 hover:bg-accent/50"
-                    )}
+                        ? 'w-8 bg-accent' 
+                        : 'w-2 bg-accent/30 hover:bg-accent/50'
+                    }`}
                   />
                 ))}
               </div>
               
-              <Button
-                variant="outline"
-                size="icon"  
+              <button
                 onClick={nextTestimonial}
-                className="rounded-full border-accent/30 hover:bg-accent/10"
+                className="w-10 h-10 rounded-full border border-accent/30 flex items-center justify-center hover:bg-accent/10 transition-all duration-300"
               >
-                <ChevronRight className="w-4 h-4" />
-              </Button>
+                <ChevronRight className="w-5 h-5 text-accent" />
+              </button>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Call-to-Action Footer Section */}
+      {/* CTA Section */}
       <section className="py-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary via-accent to-secondary opacity-90" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/90 via-secondary/90 to-accent/90" />
         
-        {/* Floating elements */}
-        <div className="absolute top-16 left-16 w-40 h-40 bg-white/10 rounded-full blur-2xl animate-pulse" />
-        <div className="absolute bottom-20 right-20 w-32 h-32 bg-white/10 rounded-full blur-xl animate-pulse delay-1000" />
-        <div className="absolute top-1/2 left-1/3 w-24 h-24 bg-white/5 rounded-full blur-lg animate-pulse delay-500" />
+        <div className="absolute inset-0">
+          <div className="absolute top-16 left-16 w-64 h-64 bg-white/10 rounded-full blur-3xl animate-float-gentle" />
+          <div className="absolute bottom-20 right-20 w-80 h-80 bg-white/10 rounded-full blur-3xl animate-float-gentle" style={{ animationDelay: '1.5s' }} />
+        </div>
         
         <div className="relative container mx-auto px-6 text-center">
-          <div className="max-w-4xl mx-auto animate-fade-in">
-            <div className="flex items-center justify-center mb-8">
-              <Sun className="w-8 h-8 text-white mr-3" />
-              <Moon className="w-8 h-8 text-white ml-3" />
+          <div className="max-w-4xl mx-auto">
+            <div className="flex items-center justify-center mb-8 animate-float-gentle">
+              <Sun className="w-8 h-8 text-white/90 mr-3" />
+              <Moon className="w-8 h-8 text-white/90 ml-3" />
             </div>
             
             <h2 className="text-4xl md:text-6xl font-bold text-white mb-8 leading-tight">
               Your Mind Deserves Peace.
-              <span className="block">Start Today.</span>
+              <span className="block mt-2">Start Today.</span>
             </h2>
             
             <p className="text-xl md:text-2xl text-white/90 mb-12 max-w-2xl mx-auto leading-relaxed">
@@ -501,52 +523,13 @@ export default function LandingPage() {
               Your journey to inner peace begins with a single step.
             </p>
 
-            {/* Auth Buttons */}
-            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-8">
-              <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
-                <h3 className="text-white font-semibold mb-4 text-lg">Create Your Account</h3>
-                <div className="space-y-3">
-                  <Button 
-                    size="lg" 
-                    className="w-full bg-white text-primary hover:bg-white/90 px-6 py-3 text-lg rounded-xl"
-                    disabled
-                  >
-                    <User className="w-5 h-5 mr-2" />
-                    Sign Up Free
-                  </Button>
-                  
-                  <Button 
-                    variant="outline" 
-                    size="lg"
-                    className="w-full border-white/30 text-white hover:bg-white/10 px-6 py-3 text-lg rounded-xl"
-                    disabled
-                  >
-                    <Mail className="w-5 h-5 mr-2" />
-                    Sign In
-                  </Button>
-                  
-                  <p className="text-xs text-white/70 text-center mt-2">
-                    Requires Supabase integration
-                  </p>
-                </div>
-              </div>
-              
-              <div className="text-center">
-                <div className="text-white/80 mb-3">Or explore as guest</div>
-                <Button 
-                  size="lg"
-                  onClick={handleStartJourney}
-                  className="bg-white text-primary hover:bg-white/95 px-8 py-4 text-xl rounded-2xl shadow-wellness-large hover:shadow-2xl transition-all duration-300 hover:scale-105"
-                >
-                  <Sparkles className="w-6 h-6 mr-3" />
-                  Get Started Free
-                  <ArrowRight className="w-6 h-6 ml-3" />
-                </Button>
-              </div>
-            </div>
+            <button className="group px-10 py-5 text-xl font-medium bg-white text-primary hover:bg-white/95 rounded-2xl shadow-wellness-large hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 flex items-center mx-auto">
+              <Sparkles className="w-6 h-6 mr-3 animate-pulse-glow" />
+              Get Started Free
+              <ArrowRight className="w-6 h-6 ml-3 group-hover:translate-x-1 transition-transform duration-300" />
+            </button>
 
-            {/* Trust indicators */}
-            <div className="flex justify-center items-center space-x-8 text-white/60 text-sm flex-wrap gap-4">
+            <div className="flex justify-center items-center space-x-8 text-white/70 text-sm mt-12 flex-wrap gap-4">
               <div className="flex items-center space-x-2">
                 <Shield className="w-4 h-4" />
                 <span>HIPAA Compliant</span>

@@ -80,14 +80,6 @@ const featureCategories = [
     description: 'Connect with licensed mental health professionals',
     features: [
       {
-        icon: Calendar,
-        title: 'Therapy Sessions',
-        description: 'Book sessions with licensed therapists through our secure platform',
-        benefits: ['Professional guidance', 'Flexible scheduling', 'Secure sessions'],
-        color: 'text-accent',
-        bgColor: 'bg-accent/10'
-      },
-      {
         icon: Users,
         title: 'Community Support',
         description: 'Join safe spaces with others on similar wellness journeys',
@@ -257,7 +249,7 @@ export default function ExploreFeatures() {
                 <div className="flex space-x-4">
                   <Button 
                     size="lg"
-                    onClick={() => router.push('/getstarted')}
+                    onClick={() => router.push('/register-user')}
                     className="bg-primary hover:bg-primary-dark"
                   >
                     <Play className="w-4 h-4 mr-2" />
@@ -266,10 +258,10 @@ export default function ExploreFeatures() {
                   <Button 
                     variant="outline" 
                     size="lg"
-                    onClick={() => router.push('/dashboard')}
+                    onClick={() => router.push('/')}
                     className="border-primary/30 hover:bg-primary/5"
                   >
-                    View Demo
+                    View Details
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 </div>
@@ -352,35 +344,6 @@ export default function ExploreFeatures() {
               </div>
             </div>
           </Card>
-
-          {/* Call to action */}
-          <div className="text-center mt-12">
-            <h3 className="text-2xl font-bold text-foreground mb-4">
-              Ready to Transform Your Mental Wellness?
-            </h3>
-            <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Join thousands of users who have already started their journey to better mental health. 
-              Your personalized wellness sanctuary awaits.
-            </p>
-            <div className="flex justify-center space-x-4">
-              <Button 
-                size="lg"
-                onClick={() => router.push('/getstarted')}
-                className="bg-primary hover:bg-primary-dark px-8"
-              >
-                Start Your Journey
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-              <Button 
-                variant="outline" 
-                size="lg"
-                onClick={() => router.push('/dashboard')}
-                className="border-primary/30 hover:bg-primary/5 px-8"
-              >
-                Try Demo
-              </Button>
-            </div>
-          </div>
         </div>
       </main>
     </div>
